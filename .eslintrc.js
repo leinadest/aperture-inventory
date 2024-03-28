@@ -23,5 +23,6 @@ module.exports = {
     'prefer-arrow-callback': 'off',
     'func-names': 'off',
     'no-console': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
