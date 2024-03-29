@@ -22,7 +22,10 @@ exports.index = asyncHandler(async (req, res) => {
   });
 });
 
-exports.itemList = asyncHandler(async (req, res) => {});
+exports.itemList = asyncHandler(async (req, res) => {
+  const items = await Item.find({}).exec();
+  res.render('itemList', { title: 'Items List', items });
+});
 
 exports.itemDetail = asyncHandler(async (req, res) => {});
 

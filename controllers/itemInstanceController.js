@@ -1,7 +1,15 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
-exports.itemInstanceList = asyncHandler(async (req, res) => {});
+const ItemInstance = require('../models/itemInstance');
+
+exports.itemInstanceList = asyncHandler(async (req, res) => {
+  const itemInstances = await ItemInstance.find({}).populate('item').exec();
+  res.render('itemInstanceList', {
+    title: 'Item Instance List',
+    itemInstances,
+  });
+});
 
 exports.itemInstanceDetail = asyncHandler(async (req, res) => {});
 
