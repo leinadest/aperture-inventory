@@ -27,7 +27,24 @@ exports.itemList = asyncHandler(async (req, res) => {
   res.render('itemList', { title: 'Items List', items });
 });
 
-exports.itemDetail = asyncHandler(async (req, res) => {});
+exports.itemDetail = asyncHandler(async (req, res, next) => {
+  const [item, itemInstances] = await Promise.all([
+    Item.findById(req.params.id).populate('category').exec(),
+    ItemInstance.find({ item: req.params.id }).exec(),
+  ]);
+
+  if (!item) {
+    const err = new Error('Item not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('itemDetail', {
+    title: item.name,
+    item,
+    itemInstances,
+  });
+});
 
 exports.itemCreateGet = asyncHandler(async (req, res) => {});
 

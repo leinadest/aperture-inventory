@@ -1,0 +1,28 @@
+extends layout 
+
+block content 
+    h1 Item: #{ title } 
+
+    h3(style='display: inline') Categories: 
+    each category in item.category
+        if category._id !== item.category[0]._id 
+            | , 
+        a(href=category.url) #{ category.name }
+
+    p= item.description
+
+    h3 Price: $#{ item.price }
+    h3 Number in stock: #{ item.numberInStock }
+
+    hr
+
+    h2 Item Instances
+
+    if itemInstances.length
+        ol 
+            each itemInstance in itemInstances 
+                li
+                    a(href=itemInstance.url) #{ item.name }
+                    |  (#{ itemInstance._id }) (#{ itemInstance.status })
+    else 
+        p There are no instances of this item.
