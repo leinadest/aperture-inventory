@@ -4,4 +4,22 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    block sidebar 
+      ul 
+        li 
+          a(href='/catalog') Dashboard
+        li 
+          a(href='/catalog/items') All items
+        li 
+          a(href='/catalog/categories') All categories
+        li 
+          a(href='/catalog/item-instances') All item instances
+        hr
+        li 
+          a(href='/catalog/item/create') Create new item
+        li 
+          a(href='/catalog/category/create') Create new category
+        li 
+          a(href='/catalog/item-instance/create') Create new item instance
+    div
+      block content
