@@ -18,4 +18,8 @@ ItemInstanceSchema.virtual('url').get(function () {
   return `/catalog/item-instance/${this._id}`;
 });
 
+ItemInstanceSchema.virtual('dueBackFormatted').get(function () {
+  return DateTime.fromJSDate(this.dueBack).toISODate(DateTime.DATE_MED);
+});
+
 module.exports = mongoose.model('ItemInstance', ItemInstanceSchema);

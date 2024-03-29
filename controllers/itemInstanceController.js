@@ -11,7 +11,22 @@ exports.itemInstanceList = asyncHandler(async (req, res) => {
   });
 });
 
-exports.itemInstanceDetail = asyncHandler(async (req, res) => {});
+exports.itemInstanceDetail = asyncHandler(async (req, res, next) => {
+  const itemInstance = await ItemInstance.findById(req.params.id)
+    .populate('item')
+    .exec();
+
+  if (!itemInstance) {
+    const err = new Error('Item instance not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('itemInstanceDetail', {
+    title: itemInstance.name,
+    itemInstance,
+  });
+});
 
 exports.itemInstanceCreateGet = asyncHandler(async (req, res) => {});
 

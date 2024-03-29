@@ -1,0 +1,9 @@
+extends layout 
+
+block content 
+    h1 Item Instance: #{ itemInstance._id }
+    h2(style='display: inline') Item: 
+        a(href=itemInstance.item.url) #{ itemInstance.item.name }
+    h3 Status: #{ itemInstance.status }
+    if itemInstance.status !== 'Available'
+        h3 Due back: #{ itemInstance.dueBackFormatted }
