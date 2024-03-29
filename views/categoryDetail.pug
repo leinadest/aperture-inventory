@@ -1,0 +1,14 @@
+extends layout 
+
+block content 
+    h1 Category: #{ title } 
+    p #{ category.description }
+    hr
+    h2 Items
+    if categoryItems.length
+        ol 
+            each categoryItem in categoryItems
+                li 
+                    a(href=categoryItem.url) #{ categoryItem.name }
+    else
+        p There are no items of this category.
