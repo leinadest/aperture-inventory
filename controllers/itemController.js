@@ -47,10 +47,10 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemCreateGet = asyncHandler(async (req, res) => {
-  const categories = await Category.find({}, { name: 1 }).exec();
+  const allCategories = await Category.find({}, { name: 1 }).exec();
   res.render('itemForm', {
     title: 'Create Item',
-    categories,
+    allCategories,
   });
 });
 
@@ -65,6 +65,7 @@ exports.itemCreatePost = [
   },
 
   // Sanitize and validate request data
+  body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
   body('name', 'Name must have at most 100 characters.')
     .trim()
     .isLength({ max: 100 })
@@ -74,8 +75,10 @@ exports.itemCreatePost = [
     .isLength({ min: 1 })
     .escape(),
   body('category.*').escape(),
-  body('price', 'Price must be a number').isNumeric().escape(),
-  body('numberInStock', 'Number in stock must be a number')
+  body('price', 'Price must be a number.').isNumeric().escape(),
+  body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
+  body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
+  body('numberInStock', 'Number in stock must be a number.')
     .isNumeric()
     .escape(),
 
@@ -106,10 +109,10 @@ exports.itemCreatePost = [
 
     // Handle validation errors using the new item
     if (errorMsgs.length) {
-      const categories = await Category.find({}, { name: 1 }).exec();
+      const allCategories = await Category.find({}, { name: 1 }).exec();
       res.render('itemForm', {
         title: 'Create Item',
-        categories,
+        allCategories,
         item,
         unit: req.body.unit,
         errors: errorMsgs,
@@ -146,6 +149,90 @@ exports.itemDeletePost = asyncHandler(async (req, res) => {
   res.redirect('/catalog/items');
 });
 
-exports.itemUpdateGet = asyncHandler(async (req, res) => {});
+exports.itemUpdateGet = asyncHandler(async (req, res, next) => {
+  const [item, allCategories] = await Promise.all([
+    Item.findById(req.params.id).exec(),
+    Category.find({}, { name: 1 }).exec(),
+  ]);
 
-exports.itemUpdatePost = asyncHandler(async (req, res) => {});
+  if (!item) {
+    const err = new Error('Item not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('itemForm', {
+    title: 'Update Item',
+    item,
+    unit: item.price.split('/')[1],
+    allCategories,
+  });
+});
+
+exports.itemUpdatePost = [
+  // Transform request data
+  (req, res, next) => {
+    if (!Array.isArray(req.body.category)) {
+      req.body.category =
+        typeof req.body.category === 'undefined' ? [] : [req.body.category];
+    }
+    next();
+  },
+
+  // Sanitize and validate request data
+  body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+  body('name', 'Name must have at most 100 characters.')
+    .trim()
+    .isLength({ max: 100 })
+    .escape(),
+  body('description', 'Description must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('category.*').escape(),
+  body('price', 'Price must be a number.').isNumeric().escape(),
+  body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
+  body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
+  body('numberInStock', 'Number in stock must be a number.')
+    .isNumeric()
+    .escape(),
+
+  // Handle route
+  asyncHandler(async (req, res) => {
+    // Determine errors
+    const errorMsgs = validationResult(req)
+      .array()
+      .map((error) => error.msg);
+    const nameIsTaken = await Item.findOne({
+      _id: { $ne: req.params.id },
+      name: req.body.name,
+    });
+    if (nameIsTaken) errorMsgs.push('Name must be unique.');
+
+    // Create item
+    const item = new Item({
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id,
+    });
+
+    // Handle errors
+    if (errorMsgs.length) {
+      const allCategories = await Category.find({}, { name: 1 }).exec();
+      res.render('itemForm', {
+        title: 'Update Item',
+        item,
+        unit: req.body.unit,
+        allCategories,
+        errorMsgs,
+      });
+    }
+
+    // Update item
+    await Item.findByIdAndUpdate(item._id, item, {});
+    res.redirect(item.url);
+  }),
+];

@@ -13,7 +13,7 @@ block content
         .form-section
             fieldset
                 legend Categories
-                each category in categories
+                each category in allCategories
                     div
                         if item && item.category.includes(category._id)
                             input(type='checkbox' id=category._id name='category' value=category._id checked)
