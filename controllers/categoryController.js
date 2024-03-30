@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 
 const Category = require('../models/category');
 const Item = require('../models/item');
+const ItemInstance = require('../models/itemInstance');
 
 exports.categoryList = asyncHandler(async (req, res) => {
   const categories = await Category.find({}).exec();
@@ -76,9 +77,38 @@ exports.categoryCreatePost = [
   }),
 ];
 
-exports.categoryDeleteGet = asyncHandler(async (req, res) => {});
+exports.categoryDeleteGet = asyncHandler(async (req, res, next) => {
+  const [category, allCategoryItems] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Item.find({ category: req.params.id }).sort('asc').exec(),
+  ]);
 
-exports.categoryDeletePost = asyncHandler(async (req, res) => {});
+  if (!category) {
+    const err = new Error('Category not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('categoryDelete', {
+    title: category.name,
+    category,
+    allCategoryItems,
+  });
+});
+
+exports.categoryDeletePost = asyncHandler(async (req, res) => {
+  const allCategoryItems = await Item.find({ category: req.params.id }, 'name')
+    .sort('asc')
+    .exec();
+  await Promise.all(
+    allCategoryItems.map((categoryItem) =>
+      ItemInstance.deleteMany({ item: categoryItem._id })
+    )
+  );
+  await Item.deleteMany({ category: req.params.id });
+  await Category.deleteOne({ _id: req.params.id });
+  res.redirect('/catalog/categories');
+});
 
 exports.categoryUpdateGet = asyncHandler(async (req, res) => {});
 

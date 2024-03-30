@@ -1,0 +1,18 @@
+extends layout 
+
+block content 
+    h1 Delete category: #[a(href=category.url)= title]
+
+    if allCategoryItems.length
+        h3 Warning: The following items and their instances in the category will be deleted 
+        ul 
+            each categoryItem in allCategoryItems
+                li
+                    a(href=categoryItem.url)= categoryItem.name
+        hr
+        
+    p #[strong Are you sure you wish to delete this category?]
+
+    form(method='post')
+        button Delete
+    
