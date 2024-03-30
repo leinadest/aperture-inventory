@@ -123,9 +123,28 @@ exports.itemCreatePost = [
   }),
 ];
 
-exports.itemDeleteGet = asyncHandler(async (req, res) => {});
+exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
+  const [item, allItemInstances] = await Promise.all([
+    Item.findById(req.params.id).populate('category').exec(),
+    ItemInstance.find({ item: req.params.id }).sort('asc').exec(),
+  ]);
 
-exports.itemDeletePost = asyncHandler(async (req, res) => {});
+  if (!item) {
+    const err = new Error('Item not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('itemDelete', { title: item.name, item, allItemInstances });
+});
+
+exports.itemDeletePost = asyncHandler(async (req, res) => {
+  await Promise.all([
+    Item.findByIdAndDelete(req.params.id),
+    ItemInstance.deleteMany({ item: req.params.id }),
+  ]);
+  res.redirect('/catalog/items');
+});
 
 exports.itemUpdateGet = asyncHandler(async (req, res) => {});
 

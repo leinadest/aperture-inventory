@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h1 Delete item: #[a(href=item.url)= title]
+
+    if allItemInstances.length 
+        h3 Warning: The following item instances will be deleted 
+        ul
+            each itemInstance in allItemInstances 
+                li
+                    a(href=itemInstance.url) #{ itemInstance._id }
+                    |  (#{ itemInstance.status })
+        hr
+
+    p #[strong Are you sure you wish to delete this item?]
+    form(method='post')
+        button Delete
