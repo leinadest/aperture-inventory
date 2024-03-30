@@ -16,11 +16,11 @@ router.get('/', itemController.index);
 // GET request from items page
 router.get('/items', itemController.itemList);
 
-// GET request from item detail page
-router.get('/item/:id', itemController.itemDetail);
-
 // GET request from item create page
 router.get('/item/create', itemController.itemCreateGet);
+
+// GET request from item detail page
+router.get('/item/:id', itemController.itemDetail);
 
 // GET request from item delete page
 router.get('/item/:id/delete', itemController.itemDeleteGet);
@@ -42,11 +42,11 @@ router.post('/item/:id/update', itemController.itemUpdatePost);
 // GET request from categories page
 router.get('/categories', categoryController.categoryList);
 
-// GET request from category detail page
-router.get('/category/:id', categoryController.categoryDetail);
-
 // GET request from category create page
 router.get('/category/create', categoryController.categoryCreateGet);
+
+// GET request from category detail page
+router.get('/category/:id', categoryController.categoryDetail);
 
 // GET request from category delete page
 router.get('/category/:id/delete', categoryController.categoryDeleteGet);
@@ -68,14 +68,14 @@ router.post('/category/:id/update', categoryController.categoryUpdatePost);
 // GET request from item instances page
 router.get('/item-instances', itemInstanceController.itemInstanceList);
 
-// GET request from item instance detail page
-router.get('/item-instance/:id', itemInstanceController.itemInstanceDetail);
-
 // GET request from item instance create page
 router.get(
   '/item-instance/create',
   itemInstanceController.itemInstanceCreateGet
 );
+
+// GET request from item instance detail page
+router.get('/item-instance/:id', itemInstanceController.itemInstanceDetail);
 
 // GET request from item instance delete page
 router.get(

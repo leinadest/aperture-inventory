@@ -1,0 +1,38 @@
+extends layout 
+
+block content 
+    h1= title 
+
+    form(method='post')
+        .form-section
+            label(for='name') Name: 
+            input(type='text' id='name' name='name' placeholder='Name of item' required value=item ? item.name : '')
+        .form-section
+            label(for='description') Description: 
+            textarea(id='description' name='description' placeholder='Description of item' required)= item ? item.description : ''
+        .form-section
+            fieldset
+                legend Categories
+                each category in categories
+                    div
+                        if item && item.category.includes(category._id)
+                            input(type='checkbox' id=category._id name='category' value=category._id checked)
+                        else 
+                            input(type='checkbox' id=category._id name='category' value=category._id)
+                        label(for=category.name) #{ category.name }
+        .form-section
+            label(for='price') Price: 
+            input(type='text' id='price' name='price' placeholder='Price of item' required value=item ? item.price : '')
+        .form-section
+            label(for='unit') Unit of item: 
+            input(type='text' id='unit' name='unit' placeholder='ex. unit, kg, lb' required value=unit ? unit : '')
+        .form-section
+            label(for='numberInStock') Number in stock: 
+            input(type='text' id='numberInStock' name='numberInStock' placeholder='Number in stock' required value=item ? item.numberInStock : '')
+        .form-section
+            button Submit
+
+    if errors
+        ul
+            each error in errors 
+                li= error
