@@ -1,0 +1,29 @@
+extends layout 
+
+block content 
+    h1= title
+
+    form(method='post')
+        .form-section
+            label(for='item') Item: 
+            select(id='item' name='item' required)
+                option(value='') --Please select an item--
+                each item in allItems
+                    option(value=item._id) #{ item.name }
+        .form-section
+            label(for='status') Status: 
+            select(id='status' name='status') Status: 
+                option(value='Available') Available
+                option(value='Maintenance') Maintenance
+                option(value='Loaned') Loaned
+                option(value='Reserved') Reserved
+        .form-section 
+            label(for='dueBack') Date when item is available: 
+            input(type='date' id='dueBack' name='dueBack')
+        .form-section
+            button Submit
+    
+    if errorMsgs
+        ul
+            each errorMsg in errorMsgs
+                li= errorMsg
