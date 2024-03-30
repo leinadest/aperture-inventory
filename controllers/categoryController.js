@@ -44,6 +44,10 @@ exports.categoryCreatePost = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
+  body('description', 'Description must be under 10,000 characters.')
+    .trim()
+    .isLength({ max: 10000 })
+    .escape(),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -110,6 +114,69 @@ exports.categoryDeletePost = asyncHandler(async (req, res) => {
   res.redirect('/catalog/categories');
 });
 
-exports.categoryUpdateGet = asyncHandler(async (req, res) => {});
+exports.categoryUpdateGet = asyncHandler(async (req, res, next) => {
+  const category = await Category.findById(req.params.id).exec();
 
-exports.categoryUpdatePost = asyncHandler(async (req, res) => {});
+  if (!category) {
+    const err = new Error('Category not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('categoryForm', {
+    title: 'Update Category',
+    category,
+  });
+});
+
+exports.categoryUpdatePost = [
+  // Sanitize and validate request data
+  body('name', 'Name must not be empty.').trim().notEmpty().escape(),
+  body('name', 'Name must be under 100 characters.')
+    .trim()
+    .isLength({ max: 100 })
+    .escape(),
+  body('description', 'Description must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('description', 'Description must be under 10,000 characters.')
+    .trim()
+    .isLength({ max: 10000 })
+    .escape(),
+
+  // Handle route
+  asyncHandler(async (req, res) => {
+    // Determine errors
+    const errorMsgs = validationResult(req)
+      .array()
+      .map((error) => error.map);
+    const nameIsTaken =
+      (await Category.findOne({
+        _id: { $ne: req.params.id },
+        name: req.body.name,
+      })) !== null;
+    if (nameIsTaken) errorMsgs.push('Name must be unique.');
+
+    // Create item
+    const category = new Category({
+      name: req.body.name,
+      description: req.body.description,
+      _id: req.params.id,
+    });
+
+    // Handle error
+    if (errorMsgs.length) {
+      res.render('categoryForm', {
+        title: 'Update Category',
+        category,
+        errorMsgs,
+      });
+      return;
+    }
+
+    // Update category
+    await Category.findByIdAndUpdate(category._id, category, {});
+    res.redirect(category.url);
+  }),
+];

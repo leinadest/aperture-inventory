@@ -9,7 +9,7 @@ block content
             input(type='text' id='name' name='name' placeholder='Name of category' required value=category ? category.name : '')
         .form-section 
             label(for='description') Description: 
-            textarea(id='description' name='description' placeholder='Description of category' required value=category ? category.description : '')
+            textarea(id='description' name='description' placeholder='Description of category' required)= category ? category.description : ''
         .form-section
             button Submit
             
