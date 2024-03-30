@@ -75,9 +75,26 @@ exports.itemInstanceCreatePost = [
   }),
 ];
 
-exports.itemInstanceDeleteGet = asyncHandler(async (req, res) => {});
+exports.itemInstanceDeleteGet = asyncHandler(async (req, res, next) => {
+  const itemInstance = await ItemInstance.findById(req.params.id)
+    .populate('item')
+    .exec();
 
-exports.itemInstanceDeletePost = asyncHandler(async (req, res) => {});
+  if (!itemInstance) {
+    const err = new Error('Item instance not found');
+    err.status = 404;
+    return next(err);
+  }
+  res.render('itemInstanceDelete', {
+    title: itemInstance._id,
+    itemInstance,
+  });
+});
+
+exports.itemInstanceDeletePost = asyncHandler(async (req, res) => {
+  await ItemInstance.deleteOne({ _id: req.params.id });
+  res.redirect('/catalog/item-instances');
+});
 
 exports.itemInstanceUpdateGet = asyncHandler(async (req, res) => {});
 

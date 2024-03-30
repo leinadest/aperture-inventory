@@ -7,3 +7,7 @@ block content
     h3 Status: #{ itemInstance.status }
     if itemInstance.status !== 'Available'
         h3 Due back: #{ itemInstance.dueBackFormatted }
+    
+    hr
+
+    a(href=itemInstance.url + '/delete') Delete item instance
