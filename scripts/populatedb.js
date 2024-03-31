@@ -8,6 +8,7 @@ console.log(
 const userArgs = process.argv.slice(2);
 
 const mongoose = require('mongoose');
+const Images = require('../api/images');
 const Item = require('../models/item');
 const Category = require('../models/category');
 const ItemInstance = require('../models/itemInstance');
@@ -36,7 +37,8 @@ async function itemCreate(
   description,
   category,
   price,
-  numberInStock
+  numberInStock,
+  imagePaths
 ) {
   const itemDetail = {
     name,
@@ -45,6 +47,9 @@ async function itemCreate(
     numberInStock,
   };
   if (category) itemDetail.category = category;
+  itemDetail.images = await Promise.all(
+    imagePaths.map((imagePath) => Images.uploadImage(imagePath))
+  );
 
   const item = new Item(itemDetail);
   await item.save();
@@ -104,6 +109,7 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: '100/kg',
       numberInStock: 1433,
+      imagePaths: ['public/images/Repulsion_Gel.png'],
     },
     {
       name: 'Propulsion Gel',
@@ -111,6 +117,7 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: '100/kg',
       numberInStock: 1542,
+      imagePaths: ['public/images/Propulsion.jpg'],
     },
     {
       name: 'Conversion Gel',
@@ -118,6 +125,7 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: '100/kg',
       numberInStock: 1293,
+      imagePaths: ['public/images/Conversion_Gel.png'],
     },
     {
       name: 'Adhesion Gel',
@@ -125,6 +133,7 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: '100/kg',
       numberInStock: 0,
+      imagePaths: ['public/images/adhesion_gel.png'],
     },
     {
       name: 'Animal King',
@@ -132,6 +141,7 @@ async function createItems() {
       category: categories[1],
       price: '2200000/unit',
       numberInStock: 11,
+      imagePaths: ['public/images/Animal_king.jpg'],
     },
     {
       name: 'Personality Construct',
@@ -139,6 +149,7 @@ async function createItems() {
       category: categories[1],
       price: '160000/unit',
       numberInStock: 964,
+      imagePaths: ['public/images/FactCore.png'],
     },
     {
       name: 'Sentry Turret',
@@ -146,6 +157,7 @@ async function createItems() {
       category: [categories[1], categories[2], categories[3]],
       price: '200000/unit',
       numberInStock: 543,
+      imagePaths: ['public/images/Portal2_Turret_Standard.png'],
     },
     {
       name: 'ATLAS',
@@ -153,6 +165,7 @@ async function createItems() {
       category: categories[1],
       price: '300000/unit',
       numberInStock: 57,
+      imagePaths: ['public/images/Atlas_from_Personality_Test.jpg'],
     },
     {
       name: 'P-body',
@@ -160,6 +173,7 @@ async function createItems() {
       category: categories[1],
       price: '300000/unit',
       numberInStock: 57,
+      imagePaths: ['public/images/P-Body_from_Personality_Test.jpg'],
     },
     {
       name: '1500 Megawatt Aperture Science Heavy Duty Super-Colliding Super Button',
@@ -167,6 +181,9 @@ async function createItems() {
       category: categories[2],
       price: '1000/unit',
       numberInStock: 2475,
+      imagePaths: [
+        'public/images/Portal_2_Heavy_Duty_Super-Colliding_Super_Button_active.png',
+      ],
     },
     {
       name: 'Aperture Science Aerial Faith Plate',
@@ -174,6 +191,7 @@ async function createItems() {
       category: categories[2],
       price: '5000/unit',
       numberInStock: 1186,
+      imagePaths: ['public/images/Faith_plate.png'],
     },
     {
       name: 'Aperture Science Crusher',
@@ -181,13 +199,7 @@ async function createItems() {
       category: categories[2],
       price: '7000/unit',
       numberInStock: 783,
-    },
-    {
-      name: 'Aperture Science Cube Button',
-      description: `The Aperture Science Cube Button is a testing element in the Aperture Science Enrichment Center that only calibrates Weighted Storage Cubes.`,
-      category: categories[2],
-      price: '1200/unit',
-      numberInStock: 1342,
+      imagePaths: ['public/images/Crusher2.png'],
     },
     {
       name: 'Aperture Science Edgeless Safety Cube Receptacle',
@@ -195,6 +207,7 @@ async function createItems() {
       category: categories[2],
       price: '1500/unit',
       numberInStock: 1742,
+      imagePaths: ['public/images/Weighted_Storage_Cube_Receptacle_active.png'],
     },
     {
       name: 'Aperture Science Emergency Intelligence Incinerator',
@@ -202,6 +215,7 @@ async function createItems() {
       category: categories[2],
       price: '5000/unit',
       numberInStock: 623,
+      imagePaths: ['public/images/Incinerator.png'],
     },
     {
       name: 'Aperture Science Excursion Funnel Generator',
@@ -209,6 +223,7 @@ async function createItems() {
       category: categories[2],
       price: '10000/unit',
       numberInStock: 452,
+      imagePaths: ['public/images/Excursion_Funnel.jpeg'],
     },
     {
       name: 'Aperture Science Hard Light Bridge Generator',
@@ -216,6 +231,7 @@ async function createItems() {
       category: categories[2],
       price: '10000/unit',
       numberInStock: 424,
+      imagePaths: ['public/images/Hard_light_surface.jpg'],
     },
     {
       name: 'Aperture Science High Energy Pellet Emitter and Receiver',
@@ -223,6 +239,10 @@ async function createItems() {
       category: categories[2],
       price: '10000/unit',
       numberInStock: 523,
+      imagePaths: [
+        'public/images/Combine_Ball_launcher.png',
+        'public/images/Combine_Ball_catcher.png',
+      ],
     },
     {
       name: 'Aperture Science Laser Field',
@@ -230,6 +250,7 @@ async function createItems() {
       category: categories[2],
       price: '8000/unit',
       numberInStock: 223,
+      imagePaths: ['public/images/Portal_2_Laser_Grid.png'],
     },
     {
       name: 'Aperture Science Material Emancipation Grill',
@@ -237,6 +258,7 @@ async function createItems() {
       category: categories[2],
       price: '8000/unit',
       numberInStock: 3631,
+      imagePaths: ['public/images/Emancipation_Grid.jpg'],
     },
     {
       name: 'Aperture Science Weighted Pivot Cube',
@@ -244,6 +266,7 @@ async function createItems() {
       category: categories[2],
       price: '650/unit',
       numberInStock: 3486,
+      imagePaths: ['public/images/Portal2_ReflectionCube.png'],
     },
     {
       name: 'Aperture Science Weighted Storage Cube',
@@ -251,13 +274,18 @@ async function createItems() {
       category: categories[2],
       price: '400/unit',
       numberInStock: 6320,
+      imagePaths: ['public/images/Portal2_StorageCube.png'],
     },
     {
-      name: 'Thermal Discouragement Beam',
+      name: 'Thermal Discouragement Beam Emitter and Receiver',
       description: `The Thermal Discouragement Beam is a testing element that is used throughout the Aperture Science Enrichment Center. It can be used to destroy threats such as Sentry Turrets, and will slowly kill a test subject whilst also pushing them away.`,
       category: categories[2],
       price: '10000/unit',
       numberInStock: 761,
+      imagePaths: [
+        'public/images/Peti_laser_emitter.png',
+        'public/images/Peti_laser_catcher.png',
+      ],
     },
     {
       name: 'Aperture Science Bomb',
@@ -265,6 +293,7 @@ async function createItems() {
       category: categories[3],
       price: '500/unit',
       numberInStock: 3702,
+      imagePaths: ['public/images/Portal_2_Bomb.png'],
     },
     {
       name: 'Aperture Science Handheld Portal Device',
@@ -272,6 +301,7 @@ async function createItems() {
       category: categories[3],
       price: '7860000000/unit',
       numberInStock: 10,
+      imagePaths: ['public/images/Portal_Gun_Concept_Art.png'],
     },
     {
       name: 'Rocket Sentry',
@@ -279,11 +309,21 @@ async function createItems() {
       category: categories[3],
       price: '220000/unit',
       numberInStock: 317,
+      imagePaths: ['public/images/Portal_Rocket_Turret.png'],
     },
   ];
   await Promise.all(
-    itemsData.map(({ name, description, category, price, numberInStock }, i) =>
-      itemCreate(i, name, description, category, price, numberInStock)
+    itemsData.map(
+      ({ name, description, category, price, numberInStock, imagePaths }, i) =>
+        itemCreate(
+          i,
+          name,
+          description,
+          category,
+          price,
+          numberInStock,
+          imagePaths
+        )
     )
   );
 }

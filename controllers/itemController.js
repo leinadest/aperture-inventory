@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
+const Images = require('../api/images');
 const Item = require('../models/item');
 const Category = require('../models/category');
 const ItemInstance = require('../models/itemInstance');
