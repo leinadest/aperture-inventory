@@ -27,5 +27,3 @@ exports.uploadImage = async (imagePath) => {
 
 exports.createImageTag = (publicId, transformation = {}) =>
   cloudinary.image(publicId, transformation);
-
-cloudinary.sourc;

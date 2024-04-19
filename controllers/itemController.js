@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
+const fs = require('fs');
 
 const Images = require('../api/images');
 const Item = require('../models/item');
@@ -106,6 +107,7 @@ exports.itemCreatePost = [
       category: req.body.category,
       price: req.body.price,
       numberInStock: req.body.numberInStock,
+      images: [],
     });
 
     // Handle validation errors using the new item
@@ -119,6 +121,21 @@ exports.itemCreatePost = [
         errors: errorMsgs,
       });
       return;
+    }
+
+    // Handle image upload
+    if (req.file) {
+      // Upload image to cloudinary
+      item.images = [await Images.uploadImage(req.file.path)];
+
+      // Clean up temp files uploaded to the backend
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+          console.error('Error deleting file', err);
+        } else {
+          console.log('Temporaary file deleted successfully');
+        }
+      });
     }
 
     // Save item
@@ -217,6 +234,7 @@ exports.itemUpdatePost = [
       category: req.body.category,
       price: req.body.price,
       numberInStock: req.body.numberInStock,
+      images: [],
       _id: req.params.id,
     });
 
@@ -226,9 +244,24 @@ exports.itemUpdatePost = [
       res.render('itemForm', {
         title: 'Update Item',
         item,
+        image: req.body.image,
         unit: req.body.unit,
         allCategories,
         errorMsgs,
+      });
+    }
+    // Handle image upload
+    if (req.file) {
+      // Upload image to cloudinary
+      item.images = [await Images.uploadImage(req.file.path)];
+
+      // Clean up temp files uploaded to the backend
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+          console.error('Error deleting file', err);
+        } else {
+          console.log('Temporary file deleted successfully');
+        }
       });
     }
 

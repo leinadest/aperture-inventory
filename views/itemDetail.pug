@@ -6,7 +6,10 @@ block content
     hr
 
     .item-details-container
-        img(src=item.images[0])
+        if item.images.length
+            img(src=item.images[0])
+        else
+            h3 No image available
         div
             h3(style='display: inline') Categories: 
             each category in item.category
