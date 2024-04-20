@@ -8,8 +8,8 @@ block content
             label(for='name') Name: 
             input(type='text' id='name' name='name' placeholder='Name of item' required value=item ? item.name : '')
         .form-section
-            label(for='image') Item Image: 
-            input(type='file' id='image' name='image')
+            label(for='images') Item Image: 
+            input(type='file' id='images' name='images' accept='image/*' multiple)
         .form-section
             label(for='description') Description: 
             textarea(id='description' name='description' placeholder='Description of item' required)= item ? item.description : ''
@@ -32,7 +32,7 @@ block content
         .form-section
             button Submit
 
-    if errors
+    if errorMsgs
         ul
-            each error in errors 
+            each error in errorMsgs
                 li= error

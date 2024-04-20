@@ -40,7 +40,7 @@ router.get('/item/:id/update', itemController.itemUpdateGet);
 
 // POST request from item create page
 router.post('/item/create', [
-  upload.single('image'),
+  upload.array('images'),
   itemController.itemCreatePost,
 ]);
 
@@ -49,7 +49,7 @@ router.post('/item/:id/delete', itemController.itemDeletePost);
 
 // POST request from item update page
 router.post('/item/:id/update', [
-  upload.single('image'),
+  upload.array('images'),
   itemController.itemUpdatePost,
 ]);
 

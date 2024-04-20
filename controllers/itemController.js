@@ -73,6 +73,20 @@ exports.itemCreatePost = [
     .trim()
     .isLength({ max: 100 })
     .escape(),
+  body('files', 'Number of selected images must be 5 or less.').custom(
+    (files, { req }) => req.files.length < 6
+  ),
+  body('files').custom((files, { req }) => {
+    req.files.forEach((file) => {
+      if (
+        !['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(
+          file.mimetype
+        )
+      )
+        throw new Error('Files must be images');
+    });
+    return true;
+  }),
   body('description', 'Description must not be empty.')
     .trim()
     .isLength({ min: 1 })
@@ -110,29 +124,43 @@ exports.itemCreatePost = [
 
     // Handle validation errors using the new item
     if (errorMsgs.length) {
+      // Clean up temp files uploaded to the backend
+      req.files.map(async (file) => {
+        fs.unlink(file.path, (err) => {
+          if (err) {
+            console.error('Error deleting file', err);
+          } else {
+            console.log('Temporary file deleted successfully');
+          }
+        });
+      });
+
       const allCategories = await Category.find({}, { name: 1 }).exec();
       res.render('itemForm', {
         title: 'Create Item',
         allCategories,
         item,
-        errors: errorMsgs,
+        errorMsgs,
       });
       return;
     }
 
-    // Handle image upload
-    if (req.file) {
-      // Upload image to cloudinary
-      item.images = [await Images.uploadImage(req.file.path)];
+    // Handle images upload
+    if (req.files) {
+      await Promise.all(
+        req.files.map(async (file) => {
+          item.images.push(await Images.uploadImage(file.path));
 
-      // Clean up temp files uploaded to the backend
-      fs.unlink(req.file.path, (err) => {
-        if (err) {
-          console.error('Error deleting file', err);
-        } else {
-          console.log('Temporaary file deleted successfully');
-        }
-      });
+          // Clean up temp files uploaded to the backend
+          fs.unlink(file.path, (err) => {
+            if (err) {
+              console.error('Error deleting file', err);
+            } else {
+              console.log('Temporary file deleted successfully');
+            }
+          });
+        })
+      );
     }
 
     // Save item
@@ -201,6 +229,20 @@ exports.itemUpdatePost = [
     .trim()
     .isLength({ max: 100 })
     .escape(),
+  body('files', 'Number of selected images must be 5 or less.').custom(
+    (files, { req }) => req.files.length < 6
+  ),
+  body('files').custom((files, { req }) => {
+    req.files.forEach((file) => {
+      if (
+        !['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(
+          file.mimetype
+        )
+      )
+        throw new Error('Files must be images');
+    });
+    return true;
+  }),
   body('description', 'Description must not be empty.')
     .trim()
     .isLength({ min: 1 })
@@ -235,6 +277,17 @@ exports.itemUpdatePost = [
 
     // Handle errors
     if (errorMsgs.length) {
+      // Clean up temp files uploaded to the backend
+      req.files.map(async (file) => {
+        fs.unlink(file.path, (err) => {
+          if (err) {
+            console.error('Error deleting file', err);
+          } else {
+            console.log('Temporary file deleted successfully');
+          }
+        });
+      });
+
       const allCategories = await Category.find({}, { name: 1 }).exec();
       res.render('itemForm', {
         title: 'Update Item',
@@ -242,27 +295,31 @@ exports.itemUpdatePost = [
         allCategories,
         errorMsgs,
       });
+      return;
     }
 
-    // Handle image upload
-    if (req.file) {
+    // Handle images upload
+    if (req.files) {
       // Delete old images
       const oldImages = (await Item.findById(req.params.id, 'images')).images;
       await Images.deleteImages(
         oldImages.map((oldImage) => oldImage.public_id)
       );
 
-      // Upload new image to cloudinary
-      item.images = [await Images.uploadImage(req.file.path)];
+      // Upload new images
+      const uploads = req.files.map(async (file) => {
+        item.images.push(await Images.uploadImage(file.path));
 
-      // Clean up temp files uploaded to the backend
-      fs.unlink(req.file.path, (err) => {
-        if (err) {
-          console.error('Error deleting file', err);
-        } else {
-          console.log('Temporary file deleted successfully');
-        }
+        // Clean up temp files uploaded to the backend
+        fs.unlink(file.path, (err) => {
+          if (err) {
+            console.error('Error deleting file', err);
+          } else {
+            console.log('Temporary file deleted successfully');
+          }
+        });
       });
+      await Promise.all(uploads);
     }
 
     // Update item
