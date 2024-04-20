@@ -30,6 +30,9 @@ block content
             label(for='unit') Unit of item: 
             input(type='text' id='unit' name='unit' placeholder='ex. unit, kg, lb' required value=item ? item.unit : '')
         .form-section
+            label(for='password') Password: 
+            input(type='password' id='password' name='password')
+        .form-section
             button Submit
 
     if errorMsgs

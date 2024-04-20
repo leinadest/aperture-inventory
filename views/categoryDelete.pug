@@ -14,5 +14,13 @@ block content
     p #[strong Are you sure you wish to delete this category?]
 
     form(method='post')
-        button Delete
+        .form-section
+            label(for='password') Password: 
+            input(type='password' id='password' name='password')
+        .form-section
+            button Delete
     
+    if errorMsgs 
+        ul 
+            each errorMsg in errorMsgs
+                li= errorMsg

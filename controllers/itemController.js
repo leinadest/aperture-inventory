@@ -1,3 +1,4 @@
+require('dotenv');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const fs = require('fs');
@@ -83,7 +84,7 @@ exports.itemCreatePost = [
           file.mimetype
         )
       )
-        throw new Error('Files must be images');
+        throw new Error('Files must be images.');
     });
     return true;
   }),
@@ -95,6 +96,9 @@ exports.itemCreatePost = [
   body('price', 'Price must be a number.').isNumeric().escape(),
   body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
   body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -184,15 +188,36 @@ exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
   res.render('itemDelete', { title: item.name, item, allItemInstances });
 });
 
-exports.itemDeletePost = asyncHandler(async (req, res) => {
-  const item = await Item.findById(req.params.id);
-  await Promise.all([
-    Images.deleteImages(item.images.map((image) => image.public_id)),
-    Item.findByIdAndDelete(req.params.id),
-    ItemInstance.deleteMany({ item: req.params.id }),
-  ]);
-  res.redirect('/catalog/items');
-});
+exports.itemDeletePost = [
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
+  asyncHandler(async (req, res) => {
+    const errorMsgs = validationResult(req)
+      .array()
+      .map((err) => err.msg);
+    if (errorMsgs.length) {
+      const [item, allItemInstances] = await Promise.all([
+        Item.findById(req.params.id).populate('category').exec(),
+        ItemInstance.find({ item: req.params.id }).sort('asc').exec(),
+      ]);
+      res.render('itemDelete', {
+        title: item.name,
+        item,
+        allItemInstances,
+        errorMsgs,
+      });
+      return;
+    }
+    const item = await Item.findById(req.params.id);
+    await Promise.all([
+      Images.deleteImages(item.images.map((image) => image.public_id)),
+      Item.findByIdAndDelete(req.params.id),
+      ItemInstance.deleteMany({ item: req.params.id }),
+    ]);
+    res.redirect('/catalog/items');
+  }),
+];
 
 exports.itemUpdateGet = asyncHandler(async (req, res, next) => {
   const [item, allCategories] = await Promise.all([
@@ -239,7 +264,7 @@ exports.itemUpdatePost = [
           file.mimetype
         )
       )
-        throw new Error('Files must be images');
+        throw new Error('Files must be images.');
     });
     return true;
   }),
@@ -251,6 +276,9 @@ exports.itemUpdatePost = [
   body('price', 'Price must be a number.').isNumeric().escape(),
   body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
   body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {

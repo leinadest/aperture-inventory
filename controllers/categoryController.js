@@ -1,3 +1,4 @@
+require('dotenv');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
@@ -48,6 +49,9 @@ exports.categoryCreatePost = [
     .trim()
     .isLength({ max: 10000 })
     .escape(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -100,19 +104,37 @@ exports.categoryDeleteGet = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.categoryDeletePost = asyncHandler(async (req, res) => {
-  const allCategoryItems = await Item.find({ category: req.params.id }, 'name')
-    .sort('asc')
-    .exec();
-  await Promise.all(
-    allCategoryItems.map((categoryItem) =>
-      ItemInstance.deleteMany({ item: categoryItem._id })
-    )
-  );
-  await Item.deleteMany({ category: req.params.id });
-  await Category.deleteOne({ _id: req.params.id });
-  res.redirect('/catalog/categories');
-});
+exports.categoryDeletePost = [
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
+  asyncHandler(async (req, res) => {
+    const [category, allCategoryItems] = await Promise.all([
+      Category.findById(req.params.id).exec(),
+      Item.find({ category: req.params.id }).sort('asc').exec(),
+    ]);
+    const errorMsgs = validationResult(req)
+      .array()
+      .map((err) => err.msg);
+    if (errorMsgs.length) {
+      res.render('categoryDelete', {
+        title: category.name,
+        category,
+        allCategoryItems,
+        errorMsgs,
+      });
+      return;
+    }
+    await Promise.all(
+      allCategoryItems.map((categoryItem) =>
+        ItemInstance.deleteMany({ item: categoryItem._id })
+      )
+    );
+    await Item.deleteMany({ category: req.params.id });
+    await Category.deleteOne({ _id: req.params.id });
+    res.redirect('/catalog/categories');
+  }),
+];
 
 exports.categoryUpdateGet = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(req.params.id).exec();
@@ -144,13 +166,16 @@ exports.categoryUpdatePost = [
     .trim()
     .isLength({ max: 10000 })
     .escape(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {
     // Determine errors
     const errorMsgs = validationResult(req)
       .array()
-      .map((error) => error.map);
+      .map((error) => error.msg);
     const nameIsTaken =
       (await Category.findOne({
         _id: { $ne: req.params.id },

@@ -11,9 +11,12 @@ block content
             label(for='description') Description: 
             textarea(id='description' name='description' placeholder='Description of category' required)= category ? category.description : ''
         .form-section
+            label(for='password') Password: 
+            input(type='password' id='password' name='password')
+        .form-section
             button Submit
             
     if errorMsgs
         ul
-        each errorMsg in errorMsgs
-            li #{ errorMsg }
+            each errorMsg in errorMsgs
+                li= errorMsg

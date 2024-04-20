@@ -25,6 +25,9 @@ block content
             label(for='dueBack') Date when item is available: 
             input(type='date' id='dueBack' name='dueBack' value=itemInstance ? itemInstance.dueBackFormatted : '')
         .form-section
+            label(for='password') Password: 
+            input(type='password' id='password' name='password')
+        .form-section
             button Submit
     
     if errorMsgs

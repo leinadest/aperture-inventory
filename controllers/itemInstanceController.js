@@ -1,3 +1,4 @@
+require('dotenv');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
@@ -42,6 +43,9 @@ exports.itemInstanceCreatePost = [
     .optional({ values: 'falsy' })
     .isISO8601()
     .toDate(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -85,16 +89,36 @@ exports.itemInstanceDeleteGet = asyncHandler(async (req, res, next) => {
     err.status = 404;
     return next(err);
   }
+
   res.render('itemInstanceDelete', {
     title: itemInstance._id,
     itemInstance,
   });
 });
 
-exports.itemInstanceDeletePost = asyncHandler(async (req, res) => {
-  await ItemInstance.deleteOne({ _id: req.params.id });
-  res.redirect('/catalog/item-instances');
-});
+exports.itemInstanceDeletePost = [
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
+  asyncHandler(async (req, res) => {
+    const errorMsgs = validationResult(req)
+      .array()
+      .map((err) => err.msg);
+    if (errorMsgs.length) {
+      const itemInstance = await ItemInstance.findById(req.params.id)
+        .populate('item')
+        .exec();
+      res.render('itemInstanceDelete', {
+        title: itemInstance._id,
+        itemInstance,
+        errorMsgs,
+      });
+      return;
+    }
+    await ItemInstance.deleteOne({ _id: req.params.id });
+    res.redirect('/catalog/item-instances');
+  }),
+];
 
 exports.itemInstanceUpdateGet = asyncHandler(async (req, res, next) => {
   const [itemInstance, allItems] = await Promise.all([
@@ -123,6 +147,9 @@ exports.itemInstanceUpdatePost = [
     .optional({ values: 'falsy' })
     .isISO8601()
     .toDate(),
+  body('password', 'Password is incorrect.').equals(
+    process.env.INVENTORY_PASSWORD
+  ),
 
   // Handle route
   asyncHandler(async (req, res) => {
