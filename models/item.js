@@ -7,7 +7,8 @@ const ItemSchema = new Schema({
   name: { type: String, required: true, maxLength: 100 },
   description: { type: String, required: true },
   category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
-  price: { type: String, required: true },
+  price: { type: Number, required: true },
+  unit: { type: String, require: true },
   numberInStock: { type: Number, required: true },
   images: { type: [String], default: [] },
 });
@@ -21,6 +22,10 @@ ItemSchema.virtual('imagesUrls').get(async function () {
     this.images.map((image) => Images.getImageUrl(image))
   );
   return imagesUrls;
+});
+
+ItemSchema.virtual('priceTag').get(function () {
+  return `${this.price}/${this.unit}`;
 });
 
 module.exports = mongoose.model('Item', ItemSchema);

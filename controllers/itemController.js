@@ -109,6 +109,7 @@ exports.itemCreatePost = [
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
+      unit: req.body.unit,
       numberInStock: req.body.numberInStock,
       images: [],
     });
@@ -120,7 +121,6 @@ exports.itemCreatePost = [
         title: 'Create Item',
         allCategories,
         item,
-        unit: req.body.unit,
         errors: errorMsgs,
       });
       return;
@@ -187,7 +187,6 @@ exports.itemUpdateGet = asyncHandler(async (req, res, next) => {
   res.render('itemForm', {
     title: 'Update Item',
     item,
-    unit: item.price.split('/')[1],
     allCategories,
   });
 });
@@ -238,6 +237,7 @@ exports.itemUpdatePost = [
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
+      unit: req.body.unit,
       numberInStock: req.body.numberInStock,
       images: [],
       _id: req.params.id,
@@ -249,8 +249,6 @@ exports.itemUpdatePost = [
       res.render('itemForm', {
         title: 'Update Item',
         item,
-        image: req.body.image,
-        unit: req.body.unit,
         allCategories,
         errorMsgs,
       });
