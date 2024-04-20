@@ -38,7 +38,6 @@ async function itemCreate(
   category,
   price,
   unit,
-  numberInStock,
   imagePaths
 ) {
   const itemDetail = {
@@ -46,7 +45,6 @@ async function itemCreate(
     description,
     price,
     unit,
-    numberInStock,
   };
   if (category) itemDetail.category = category;
   itemDetail.images = await Promise.all(
@@ -111,7 +109,6 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: 100,
       unit: 'kg',
-      numberInStock: 1433,
       imagePaths: ['public/images/Repulsion_Gel.png'],
     },
     {
@@ -120,7 +117,6 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: 100,
       unit: 'kg',
-      numberInStock: 1542,
       imagePaths: ['public/images/Propulsion.jpg'],
     },
     {
@@ -129,7 +125,6 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: 100,
       unit: 'kg',
-      numberInStock: 1293,
       imagePaths: ['public/images/Conversion_Gel.png'],
     },
     {
@@ -138,7 +133,6 @@ async function createItems() {
       category: [categories[0], categories[2]],
       price: 100,
       unit: 'kg',
-      numberInStock: 0,
       imagePaths: ['public/images/adhesion_gel.png'],
     },
     {
@@ -147,7 +141,6 @@ async function createItems() {
       category: categories[1],
       price: 2200000,
       unit: 'unit',
-      numberInStock: 11,
       imagePaths: ['public/images/Animal_king.jpg'],
     },
     {
@@ -156,7 +149,6 @@ async function createItems() {
       category: categories[1],
       price: 160000,
       unit: 'unit',
-      numberInStock: 964,
       imagePaths: ['public/images/FactCore.png'],
     },
     {
@@ -165,7 +157,6 @@ async function createItems() {
       category: [categories[1], categories[2], categories[3]],
       price: 200000,
       unit: 'unit',
-      numberInStock: 543,
       imagePaths: ['public/images/Portal2_Turret_Standard.png'],
     },
     {
@@ -174,7 +165,6 @@ async function createItems() {
       category: categories[1],
       price: 300000,
       unit: 'unit',
-      numberInStock: 57,
       imagePaths: ['public/images/Atlas_from_Personality_Test.jpg'],
     },
     {
@@ -183,7 +173,6 @@ async function createItems() {
       category: categories[1],
       price: 300000,
       unit: 'unit',
-      numberInStock: 57,
       imagePaths: ['public/images/P-Body_from_Personality_Test.jpg'],
     },
     {
@@ -192,7 +181,6 @@ async function createItems() {
       category: categories[2],
       price: 1000,
       unit: 'unit',
-      numberInStock: 2475,
       imagePaths: [
         'public/images/Portal_2_Heavy_Duty_Super-Colliding_Super_Button_active.png',
       ],
@@ -203,7 +191,6 @@ async function createItems() {
       category: categories[2],
       price: 5000,
       unit: 'unit',
-      numberInStock: 1186,
       imagePaths: ['public/images/Faith_plate.png'],
     },
     {
@@ -212,7 +199,6 @@ async function createItems() {
       category: categories[2],
       price: 7000,
       unit: 'unit',
-      numberInStock: 783,
       imagePaths: ['public/images/Crusher2.png'],
     },
     {
@@ -221,7 +207,6 @@ async function createItems() {
       category: categories[2],
       price: 1500,
       unit: 'unit',
-      numberInStock: 1742,
       imagePaths: ['public/images/Weighted_Storage_Cube_Receptacle_active.png'],
     },
     {
@@ -230,7 +215,6 @@ async function createItems() {
       category: categories[2],
       price: 5000,
       unit: 'unit',
-      numberInStock: 623,
       imagePaths: ['public/images/Incinerator.png'],
     },
     {
@@ -239,7 +223,6 @@ async function createItems() {
       category: categories[2],
       price: 10000,
       unit: 'unit',
-      numberInStock: 452,
       imagePaths: ['public/images/Excursion_Funnel.jpeg'],
     },
     {
@@ -248,7 +231,6 @@ async function createItems() {
       category: categories[2],
       price: 10000,
       unit: 'unit',
-      numberInStock: 424,
       imagePaths: ['public/images/Hard_light_surface.jpg'],
     },
     {
@@ -257,7 +239,6 @@ async function createItems() {
       category: categories[2],
       price: 10000,
       unit: 'unit',
-      numberInStock: 523,
       imagePaths: [
         'public/images/Combine_Ball_launcher.png',
         'public/images/Combine_Ball_catcher.png',
@@ -269,7 +250,6 @@ async function createItems() {
       category: categories[2],
       price: 8000,
       unit: 'unit',
-      numberInStock: 223,
       imagePaths: ['public/images/Portal_2_Laser_Grid.png'],
     },
     {
@@ -278,7 +258,6 @@ async function createItems() {
       category: categories[2],
       price: 8000,
       unit: 'unit',
-      numberInStock: 3631,
       imagePaths: ['public/images/Emancipation_Grid.jpg'],
     },
     {
@@ -287,7 +266,6 @@ async function createItems() {
       category: categories[2],
       price: 650,
       unit: 'unit',
-      numberInStock: 3486,
       imagePaths: ['public/images/Portal2_ReflectionCube.png'],
     },
     {
@@ -296,7 +274,6 @@ async function createItems() {
       category: categories[2],
       price: 400,
       unit: 'unit',
-      numberInStock: 6320,
       imagePaths: ['public/images/Portal2_StorageCube.png'],
     },
     {
@@ -305,7 +282,6 @@ async function createItems() {
       category: categories[2],
       price: 10000,
       unit: 'unit',
-      numberInStock: 761,
       imagePaths: [
         'public/images/Peti_laser_emitter.png',
         'public/images/Peti_laser_catcher.png',
@@ -317,7 +293,6 @@ async function createItems() {
       category: categories[3],
       price: 500,
       unit: 'unit',
-      numberInStock: 3702,
       imagePaths: ['public/images/Portal_2_Bomb.png'],
     },
     {
@@ -326,7 +301,6 @@ async function createItems() {
       category: categories[3],
       price: 7860000000,
       unit: 'unit',
-      numberInStock: 10,
       imagePaths: ['public/images/Portal_Gun_Concept_Art.png'],
     },
     {
@@ -335,26 +309,13 @@ async function createItems() {
       category: categories[3],
       price: 220000,
       unit: 'unit',
-      numberInStock: 317,
       imagePaths: ['public/images/Portal_Rocket_Turret.png'],
     },
   ];
   await Promise.all(
     itemsData.map(
-      (
-        { name, description, category, price, unit, numberInStock, imagePaths },
-        i
-      ) =>
-        itemCreate(
-          i,
-          name,
-          description,
-          category,
-          price,
-          unit,
-          numberInStock,
-          imagePaths
-        )
+      ({ name, description, category, price, unit, imagePaths }, i) =>
+        itemCreate(i, name, description, category, price, unit, imagePaths)
     )
   );
 }

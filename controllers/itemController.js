@@ -41,12 +41,11 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
     return next(err);
   }
 
-  const imagesUrls = await item.imagesUrls;
-
   res.render('itemDetail', {
     title: item.name,
     item,
-    imagesUrls,
+    imagesUrls: await item.imagesUrls,
+    numberInStock: await item.numberInStock,
     itemInstances,
   });
 });
@@ -83,9 +82,6 @@ exports.itemCreatePost = [
   body('price', 'Price must be a number.').isNumeric().escape(),
   body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
   body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
-  body('numberInStock', 'Number in stock must be a number.')
-    .isNumeric()
-    .escape(),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -110,7 +106,6 @@ exports.itemCreatePost = [
       category: req.body.category,
       price: req.body.price,
       unit: req.body.unit,
-      numberInStock: req.body.numberInStock,
       images: [],
     });
 
@@ -215,9 +210,6 @@ exports.itemUpdatePost = [
   body('price', 'Price must be a number.').isNumeric().escape(),
   body('unit', 'Unit must not be empty.').trim().isLength({ min: 1 }).escape(),
   body('unit', 'Unit must be in letters.').trim().isAlpha().escape(),
-  body('numberInStock', 'Number in stock must be a number.')
-    .isNumeric()
-    .escape(),
 
   // Handle route
   asyncHandler(async (req, res) => {
@@ -238,7 +230,6 @@ exports.itemUpdatePost = [
       category: req.body.category,
       price: req.body.price,
       unit: req.body.unit,
-      numberInStock: req.body.numberInStock,
       images: [],
       _id: req.params.id,
     });

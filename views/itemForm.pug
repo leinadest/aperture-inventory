@@ -30,9 +30,6 @@ block content
             label(for='unit') Unit of item: 
             input(type='text' id='unit' name='unit' placeholder='ex. unit, kg, lb' required value=item ? item.unit : '')
         .form-section
-            label(for='numberInStock') Number in stock: 
-            input(type='text' id='numberInStock' name='numberInStock' placeholder='Number in stock' required value=item ? item.numberInStock : '')
-        .form-section
             button Submit
 
     if errors
