@@ -16,14 +16,12 @@ exports.uploadImage = async (imagePath) => {
   try {
     const result = await cloudinary.uploader.upload(imagePath, options);
     console.log(result);
-    return result.public_id;
+    return { public_id: result.public_id, url: result.url };
   } catch (error) {
     console.error(error);
     return error.message;
   }
 };
-
-exports.getImageUrl = async (publicId) => cloudinary.url(publicId);
 
 exports.deleteImages = async (imagePaths) => {
   try {

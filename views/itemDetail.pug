@@ -7,7 +7,7 @@ block content
 
     .item-details-container
         if item.images.length
-            img(src=imagesUrls[0])
+            img(src=item.images[0].url)
         else
             h3 No image available
         div

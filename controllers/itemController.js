@@ -44,7 +44,6 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
   res.render('itemDetail', {
     title: item.name,
     item,
-    imagesUrls: await item.imagesUrls,
     numberInStock: await item.numberInStock,
     itemInstances,
   });
@@ -160,7 +159,7 @@ exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
 exports.itemDeletePost = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   await Promise.all([
-    Images.deleteImages(item.images),
+    Images.deleteImages(item.images.map((image) => image.public_id)),
     Item.findByIdAndDelete(req.params.id),
     ItemInstance.deleteMany({ item: req.params.id }),
   ]);
@@ -249,7 +248,9 @@ exports.itemUpdatePost = [
     if (req.file) {
       // Delete old images
       const oldImages = (await Item.findById(req.params.id, 'images')).images;
-      await Images.deleteImages(oldImages);
+      await Images.deleteImages(
+        oldImages.map((oldImage) => oldImage.public_id)
+      );
 
       // Upload new image to cloudinary
       item.images = [await Images.uploadImage(req.file.path)];

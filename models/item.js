@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-const Images = require('../api/images');
 const ItemInstance = require('./itemInstance');
 
 const { Schema } = mongoose;
+
+const ImageSchema = new Schema({ public_id: String, url: String });
 
 const ItemSchema = new Schema({
   name: { type: String, required: true, maxLength: 100 },
@@ -10,7 +11,7 @@ const ItemSchema = new Schema({
   category: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
   price: { type: Number, required: true },
   unit: { type: String, require: true },
-  images: { type: [String], default: [] },
+  images: { type: [ImageSchema], default: [] },
 });
 
 ItemSchema.virtual('url').get(function () {
@@ -19,13 +20,6 @@ ItemSchema.virtual('url').get(function () {
 
 ItemSchema.virtual('numberInStock').get(async function () {
   return ItemInstance.countDocuments({ item: this._id });
-});
-
-ItemSchema.virtual('imagesUrls').get(async function () {
-  const imagesUrls = await Promise.all(
-    this.images.map((image) => Images.getImageUrl(image))
-  );
-  return imagesUrls;
 });
 
 ItemSchema.virtual('priceTag').get(function () {
