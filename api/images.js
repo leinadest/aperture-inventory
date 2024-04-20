@@ -11,14 +11,25 @@ cloudinary.config({
 exports.uploadImage = async (imagePath) => {
   const options = {
     use_filename: true,
-    unique_filename: false,
-    overwrite: true,
   };
 
   try {
     const result = await cloudinary.uploader.upload(imagePath, options);
     console.log(result);
-    return result.url;
+    return result.public_id;
+  } catch (error) {
+    console.error(error);
+    return error.message;
+  }
+};
+
+exports.getImageUrl = async (publicId) => cloudinary.url(publicId);
+
+exports.deleteImages = async (imagePaths) => {
+  try {
+    const result = await cloudinary.api.delete_resources(imagePaths);
+    console.log(result);
+    return result;
   } catch (error) {
     console.error(error);
     return error.message;

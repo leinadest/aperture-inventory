@@ -23,6 +23,12 @@ const itemDetails = {
   imagePaths: ['public/images/Repulsion_Gel.png'],
 };
 
+// Test uploadImage
+async function testUploadImage() {
+  const responses = await Promise.all(itemDetails.imagePaths.map((imagePath) => Images.uploadImage(imagePath)))
+  console.log(responses);
+}
+
 // Test model save
 async function testSave() {
   const imageUrls = await Promise.all(
@@ -42,7 +48,7 @@ async function testSave() {
 }
 
 // Test image url
-async function testUrl() {
+async function testUpload() {
   const imageUrls = await Promise.all(
     itemDetails.imagePaths.map((imagePath) => Images.uploadImage(imagePath))
   );
@@ -58,4 +64,4 @@ async function testUrl() {
   console.log(`Item: ${item}`);
 }
 
-testUrl();
+testUploadImage();

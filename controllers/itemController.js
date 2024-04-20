@@ -41,9 +41,12 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
     return next(err);
   }
 
+  const imagesUrls = await item.imagesUrls;
+
   res.render('itemDetail', {
     title: item.name,
     item,
+    imagesUrls,
     itemInstances,
   });
 });
@@ -160,7 +163,9 @@ exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemDeletePost = asyncHandler(async (req, res) => {
+  const item = await Item.findById(req.params.id);
   await Promise.all([
+    Images.deleteImages(item.images),
     Item.findByIdAndDelete(req.params.id),
     ItemInstance.deleteMany({ item: req.params.id }),
   ]);
@@ -250,9 +255,14 @@ exports.itemUpdatePost = [
         errorMsgs,
       });
     }
+
     // Handle image upload
     if (req.file) {
-      // Upload image to cloudinary
+      // Delete old images
+      const oldImages = (await Item.findById(req.params.id, 'images')).images;
+      await Images.deleteImages(oldImages);
+
+      // Upload new image to cloudinary
       item.images = [await Images.uploadImage(req.file.path)];
 
       // Clean up temp files uploaded to the backend

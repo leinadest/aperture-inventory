@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Images = require('../api/images');
 
 const { Schema } = mongoose;
 
@@ -13,6 +14,13 @@ const ItemSchema = new Schema({
 
 ItemSchema.virtual('url').get(function () {
   return `/catalog/item/${this._id}`;
+});
+
+ItemSchema.virtual('imagesUrls').get(async function () {
+  const imagesUrls = await Promise.all(
+    this.images.map((image) => Images.getImageUrl(image))
+  );
+  return imagesUrls;
 });
 
 module.exports = mongoose.model('Item', ItemSchema);
