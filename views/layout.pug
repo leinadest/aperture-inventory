@@ -4,22 +4,31 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block sidebar 
-      ul 
+    header
+       img(src='/images/aperture_logo.png' style='height: 60px; filter: brightness(0) invert(1)')
+    aside
+      ul(style='padding: 20px 15px') 
         li 
+          img(src='/images/dashboard.svg')
           a(href='/catalog') Dashboard
         li 
+          img(src='/images/item.svg')
           a(href='/catalog/items') All items
         li 
+          img(src='/images/category.svg')
           a(href='/catalog/categories') All categories
         li 
+          img(src='/images/item_instance.svg')
           a(href='/catalog/item-instances') All item instances
         hr
         li 
+          img(src='/images/create.svg')
           a(href='/catalog/item/create') Create new item
         li 
+          img(src='/images/create.svg')
           a(href='/catalog/category/create') Create new category
         li 
+          img(src='/images/create.svg')
           a(href='/catalog/item-instance/create') Create new item instance
     main
       block content
