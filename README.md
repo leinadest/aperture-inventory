@@ -2,6 +2,8 @@
 
 This project is a fake inventory management application for the company "Aperture Science" featured in the Portal game series.
 
+The password for inventory changes: ```ratman```
+
 ## Features
 
 - Database CRUD operations on Mongodb; the user is able to create, view, update, and delete items, categories, and item instances
